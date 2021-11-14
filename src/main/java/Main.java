@@ -19,9 +19,9 @@ public class Main {
     double algorandBestLatency = Double.MAX_VALUE, algorandBestTimeout = 0;
     double mirBestLatency = Double.MAX_VALUE, mirBestTimeout = 0;
 
-//    for (double initialTimeout = 0.01; initialTimeout <= 0.4; initialTimeout += 0.01) { // 40 lan
+    for (double initialTimeout = 0.01; initialTimeout <= 0.01; initialTimeout += 0.01) { // 40 lan
 //    for (double initialTimeout = 3; initialTimeout <= 3; initialTimeout += 0.01) { // 40 lan
-    for (double initialTimeout = 1; initialTimeout <= 1; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 1; initialTimeout <= 1; initialTimeout += 0.01) { // 40 lan
 //    for (double initialTimeout = 0.001; initialTimeout <= 0.001; initialTimeout += 0.01) { // 40 lan
 //    for (double initialTimeout = 0.01; initialTimeout <= 0.01; initialTimeout += 0.01) { // 40 lan
       DoubleSummaryStatistics tendermintOverallStats = new DoubleSummaryStatistics(),
