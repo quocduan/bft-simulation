@@ -19,19 +19,23 @@ public class Main {
     double algorandBestLatency = Double.MAX_VALUE, algorandBestTimeout = 0;
     double mirBestLatency = Double.MAX_VALUE, mirBestTimeout = 0;
 
-    for (double initalTimeout = 0.01; initalTimeout <= 0.01; initalTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 0.01; initialTimeout <= 0.4; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 3; initialTimeout <= 3; initialTimeout += 0.01) { // 40 lan
+    for (double initialTimeout = 1; initialTimeout <= 1; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 0.001; initialTimeout <= 0.001; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 0.01; initialTimeout <= 0.01; initialTimeout += 0.01) { // 40 lan
       DoubleSummaryStatistics tendermintOverallStats = new DoubleSummaryStatistics(),
           algorandOverallStats = new DoubleSummaryStatistics(),
           mirOverallStats = new DoubleSummaryStatistics();
 
 
 
-      System.out.println("Start run initalTimeout="+initalTimeout);
-//      for (int i = 0; i < SAMPLES; ++i) { // 1000
+      System.out.println("Start run initialTimeout="+initialTimeout);
+//      for (int i = 0; i < SAMPLES; ++i) { // 1000 --> chạy 1000 lần cho một initialTimout để lấy số liệu thống kê trung bình chính xác nhất.
         Optional<DoubleSummaryStatistics> tendermintStats =
-//            runTendermint(initalTimeout, 3, 1); // 100
-            runTendermint(initalTimeout, 90, 10); // 100
-      System.out.println("End run initalTimeout="+initalTimeout);
+//            runTendermint(initialTimeout, 3, 1); // 100
+            runTendermint(initialTimeout, 200, 20); // 100
+      System.out.println("End run initialTimeout="+initialTimeout);
       System.out.println("Total Proposals: "+ Simulation.countProposals);
       System.out.println("Total countBeginProposal: "+ CorrectTendermintNode.countBeginProposal);
       System.out.println("Total countFailedNode: "+ FailedNode.countFailedNode);
@@ -43,11 +47,11 @@ public class Main {
 
 
 //        Optional<DoubleSummaryStatistics> algorandStats =
-//            runAlgorand(initalTimeout, 90, 10);
+//            runAlgorand(initialTimeout, 90, 10);
 //
 //
 //        Optional<DoubleSummaryStatistics> mirStats =
-//            runMir(initalTimeout, 90, 10);
+//            runMir(initialTimeout, 90, 10);
 
         tendermintStats.ifPresent(tendermintOverallStats::combine);
 //        algorandStats.ifPresent(algorandOverallStats::combine);
@@ -57,21 +61,21 @@ public class Main {
       if (tendermintOverallStats.getCount() > 0 &&
           tendermintOverallStats.getAverage() < tendermintBestLatency) {
         tendermintBestLatency = tendermintOverallStats.getAverage();
-        tendermintBestTimeout = initalTimeout;
+        tendermintBestTimeout = initialTimeout;
       }
       if (algorandOverallStats.getCount() > 0 &&
           algorandOverallStats.getAverage() < algorandBestLatency) {
         algorandBestLatency = algorandOverallStats.getAverage();
-        algorandBestTimeout = initalTimeout;
+        algorandBestTimeout = initialTimeout;
       }
       if (mirOverallStats.getCount() > 0 &&
           mirOverallStats.getAverage() < mirBestLatency) {
         mirBestLatency = mirOverallStats.getAverage();
-        mirBestTimeout = initalTimeout;
+        mirBestTimeout = initialTimeout;
       }
 
       System.out.printf("%.2f, %s, %s, %s\n",
-          initalTimeout,
+          initialTimeout,
           tendermintOverallStats.getCount() > 0 ? tendermintOverallStats.getAverage() : "",
           algorandOverallStats.getCount() > 0 ? algorandOverallStats.getAverage() : "",
           mirOverallStats.getCount() > 0 ? mirOverallStats.getAverage() : "");
