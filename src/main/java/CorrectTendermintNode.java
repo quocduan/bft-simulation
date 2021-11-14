@@ -54,7 +54,13 @@ class CorrectTendermintNode extends Node {
   }
 
   @Override public void onMessageEvent(MessageEvent messageEvent, Simulation simulation) {
+    System.out.println("----------------------------- ");
+    System.out.println("onMessageEvent on node: " + this.getNodeIndex() + ", from node: "+messageEvent.getMessage().getNodeIndex());
+    System.out.println("cycle: " + this.cycle);
+
     if (hasTerminated()) {
+      System.out.println("Node has been terminated ");
+
       return;
     }
 
@@ -62,6 +68,7 @@ class CorrectTendermintNode extends Node {
     double time = messageEvent.getTime();
     cycleStates.putIfAbsent(message.getCycle(), new CycleState());
     CycleState cycleState = cycleStates.get(message.getCycle());
+    System.out.println("Message type: "+ message.getClass().getSimpleName());
 
     if (message instanceof ProposalMessage) {
       cycleState.proposals.add(message.getProposal());
@@ -82,12 +89,16 @@ class CorrectTendermintNode extends Node {
     } else {
       throw new AssertionError("Unexpected message: " + message);
     }
+    System.out.println("----------------------------- ");
+
   }
 
     private void beginProposal(Simulation simulation, double time) { // time lien quan den so 4 // thang hien tai la thang nao?
     countBeginProposal++;
       System.out.println("----------------------------- " );
     System.out.println("beginProposal: " + this.getNodeIndex());
+    System.out.println("cycle: " + this.cycle);
+
     protocolState = ProtocolState.PROPOSAL;
     if(cycle>maxCycle){
       maxCycle=cycle;
@@ -100,25 +111,26 @@ class CorrectTendermintNode extends Node {
       }
       listProposedNode.add(this);
       Proposal proposal = new Proposal();
-      Message message = new ProposalMessage(cycle, proposal); // pre-prepare message + block
+      Message message = new ProposalMessage(cycle, proposal, this.getNodeIndex()); // pre-prepare message + block
       Simulation.countProposals++;
       simulation.broadcast(this, message, time); //--> add message event
     }
-      System.out.println("resetTimeout " + this.getNodeIndex());
+    System.out.println("resetTimeout " + this.getNodeIndex());
 
-      resetTimeout(simulation, time); // --> TimerEvent
-      System.out.println("----------------------------- " );
+    resetTimeout(simulation, time); // --> TimerEvent
+    System.out.println("----------------------------- " );
 
-    }
+  }
 
   private void beginPreVote(Simulation simulation, double time) {
     System.out.println("----------------------------- " );
     System.out.println("beginPreVote: " + this.getNodeIndex());
+    System.out.println("cycle: " + this.cycle);
 
     protocolState = ProtocolState.PRE_VOTE;
     Proposal p = getProposalToPreVote(simulation);
     System.out.println("getProposalToPreVote: "+ p);
-    Message message = new PreVoteMessage(cycle, p);
+    Message message = new PreVoteMessage(cycle, p, this.getNodeIndex());
     simulation.broadcast(this, message, time);
     resetTimeout(simulation, time);
     System.out.println("broadcast & setTimeout" );
@@ -162,12 +174,13 @@ class CorrectTendermintNode extends Node {
   private void beginPreCommit(Simulation simulation, double time) {
     System.out.println("----------------------------- " );
     System.out.println("beginPreCommit: " + this.getNodeIndex());
+    System.out.println("cycle: " + this.cycle);
 
     protocolState = ProtocolState.PRE_COMMIT;
     Set<Proposal> preVotedProposals = getCurrentCycleState().getPreVotedProposals(simulation);
     Message message;
     if (preVotedProposals.isEmpty()) {
-      message = new PreCommitMessage(cycle, null);
+      message = new PreCommitMessage(cycle, null, this.getNodeIndex());
       System.out.println("beginPreCommit: no proposal" );
 
     } else {
@@ -182,7 +195,7 @@ class CorrectTendermintNode extends Node {
       System.out.println("beginPreCommit proposal: " + proposal);
 
 
-      message = new PreCommitMessage(cycle, proposal);
+      message = new PreCommitMessage(cycle, proposal, this.getNodeIndex());
     }
     System.out.println("broadcast & resetTimeout" );
 

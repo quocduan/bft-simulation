@@ -2,11 +2,22 @@ abstract class Message {
   private final int cycle;
   private final Proposal proposal;
 
+  private  int nodeIndex=-1;
+
   Message(int cycle, Proposal proposal) {
     this.cycle = cycle;
     this.proposal = proposal;
   }
 
+  Message(int cycle, Proposal proposal, int nodeIndex) {
+    this.cycle = cycle;
+    this.proposal = proposal;
+    this.nodeIndex = nodeIndex;
+  }
+
+  public int getNodeIndex(){
+    return nodeIndex;
+  }
   int getCycle() {
     return cycle;
   }
@@ -21,6 +32,10 @@ class ProposalMessage extends Message {
     super(cycle, proposal);
   }
 
+  ProposalMessage(int cycle, Proposal proposal, int nodeIndex) {
+    super(cycle, proposal, nodeIndex);
+  }
+
   @Override public String toString() {
     return String.format("ProposalMessage[cycle=%d, proposal=%s]", getCycle(), getProposal());
   }
@@ -32,6 +47,10 @@ class PreVoteMessage extends Message {
     super(cycle, proposal);
   }
 
+  PreVoteMessage(int cycle, Proposal proposal, int nodeIndex) {
+    super(cycle, proposal, nodeIndex);
+  }
+
   @Override public String toString() {
     return String.format("PreVoteMessage[cycle=%d, proposal=%s]", getCycle(), getProposal());
   }
@@ -41,6 +60,10 @@ class PreVoteMessage extends Message {
 class PreCommitMessage extends Message {
   PreCommitMessage(int cycle, Proposal proposal) {
     super(cycle, proposal);
+  }
+
+  PreCommitMessage(int cycle, Proposal proposal, int nodeIndex) {
+    super(cycle, proposal, nodeIndex);
   }
 
   @Override public String toString() {
