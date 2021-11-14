@@ -29,12 +29,14 @@ public class Main {
       System.out.println("Start run initalTimeout="+initalTimeout);
 //      for (int i = 0; i < SAMPLES; ++i) { // 1000
         Optional<DoubleSummaryStatistics> tendermintStats =
-            runTendermint(initalTimeout, 3, 1); // 100
+//            runTendermint(initalTimeout, 3, 1); // 100
+            runTendermint(initalTimeout, 90, 10); // 100
       System.out.println("End run initalTimeout="+initalTimeout);
       System.out.println("Total Proposals: "+ Simulation.countProposals);
       System.out.println("Total countBeginProposal: "+ CorrectTendermintNode.countBeginProposal);
       System.out.println("Total countFailedNode: "+ FailedNode.countFailedNode);
       System.out.println("max Cycle "+ (CorrectTendermintNode.maxCycle+1));
+      System.out.println("Max Events Size "+ Simulation.maxEventsSize);
 
 
 

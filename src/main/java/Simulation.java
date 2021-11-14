@@ -2,6 +2,7 @@ import java.util.TreeSet;
 
 class Simulation {
   public static int countProposals = 0;
+  public static int maxEventsSize = 0;
   private final Network network;
   private final TreeSet<Event> eventsByTime = new TreeSet<>();
   private double id=-1;
@@ -25,6 +26,7 @@ class Simulation {
     for (Node destination : network.getNodes()) { // all nodes
       double latency = network.getLatency(source, destination); // <--- gia lap
       double arrivalTime = time + latency; // thoi diem
+      System.out.println("TIME:broadcast: time: "+ time + ", latency: "+ latency + ",arrivalTime: " + arrivalTime + ", from cycle: "+ message.getCycle() );
       eventsByTime.add(new MessageEvent(arrivalTime, destination, message));
     }
   }
@@ -65,7 +67,12 @@ class Simulation {
 
     // mỗi loại có một simulator riêng --> quản lý events riêng
     while (!eventsByTime.isEmpty()) {
+      System.out.println("*** eventsByTime size: "+ eventsByTime.size());
+      if(maxEventsSize<eventsByTime.size()){
+        maxEventsSize=eventsByTime.size();
+      }
       Event event = eventsByTime.pollFirst();
+
       if (event.getTime() > timeLimit) {
         System.out.println("WARNING: Simulation timed out");
         return false;

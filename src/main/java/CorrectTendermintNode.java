@@ -207,6 +207,7 @@ class CorrectTendermintNode extends Node {
 
   private void resetTimeout(Simulation simulation, double time) {
     nextTimer = time + timeout;
+    System.out.println("TIME:resetTimeout: time: "+ time + ", timeout: "+ timeout + ", nextTimer: " + nextTimer+ ", cycle: "+ this.cycle);
     simulation.scheduleEvent(new TimerEvent(nextTimer, this)); // re nhanh --> listener lang nghe event --> chay event
   }
 
