@@ -1,6 +1,7 @@
 import java.util.TreeSet;
 
 class Simulation {
+  public static int countProposals = 0;
   private final Network network;
   private final TreeSet<Event> eventsByTime = new TreeSet<>();
   private double id=-1;
@@ -49,7 +50,12 @@ class Simulation {
    */
   boolean run(double timeLimit) { // 4s
     System.out.println("Start Simulation: "+ this.getId());
+    int i = 0;
     for (Node node : network.getNodes()) {
+      i++;
+//      if (i>3) {
+//        break;
+//      }
 //      node.onStart(this);
 //      Node n = network.getNodes().get(0);
       System.out.println("onStart Node: "+ node.getNodeIndex());

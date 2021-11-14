@@ -1,9 +1,10 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 class CorrectTendermintNode extends Node {
+  public static int maxCycle=0;
+  public static int countBeginProposal=0;
+  public static List<CorrectTendermintNode> listProposedNode =  new ArrayList<>();
+
   private int cycle = 0; // tổng cộng có 4 cycles
   private Map<Integer, CycleState> cycleStates = new HashMap<>();
   private ProtocolState protocolState;
@@ -84,10 +85,17 @@ class CorrectTendermintNode extends Node {
   }
 
     private void beginProposal(Simulation simulation, double time) { // time lien quan den so 4 // thang hien tai la thang nao?
+    countBeginProposal++;
+
     protocolState = ProtocolState.PROPOSAL;
+    if(cycle>maxCycle){
+      maxCycle=cycle;
+    }
     if (equals(simulation.getLeader(cycle))) {
+      listProposedNode.add(this);
       Proposal proposal = new Proposal();
       Message message = new ProposalMessage(cycle, proposal); // pre-prepare message + block
+      Simulation.countProposals++;
       simulation.broadcast(this, message, time); //--> add message event
     }
     resetTimeout(simulation, time); // --> TimerEvent

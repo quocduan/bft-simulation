@@ -46,6 +46,8 @@ abstract class Node {
 
 /** A node which has simply failed, and thus ignores all events. */
 class FailedNode extends Node {
+  public static int countFailedNode=0;
+
   public FailedNode(EarthPosition position) {
     super(position);
   }
@@ -55,6 +57,7 @@ class FailedNode extends Node {
 
 
   @Override public void onStart(Simulation simulation) {
+    countFailedNode ++;
     // No-op.
   }
 

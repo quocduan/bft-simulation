@@ -19,7 +19,7 @@ public class Main {
     double algorandBestLatency = Double.MAX_VALUE, algorandBestTimeout = 0;
     double mirBestLatency = Double.MAX_VALUE, mirBestTimeout = 0;
 
-    for (double initalTimeout = 0.01; initalTimeout <= 0.04; initalTimeout += 0.01) { // 40 lan
+    for (double initalTimeout = 0.01; initalTimeout <= 0.01; initalTimeout += 0.01) { // 40 lan
       DoubleSummaryStatistics tendermintOverallStats = new DoubleSummaryStatistics(),
           algorandOverallStats = new DoubleSummaryStatistics(),
           mirOverallStats = new DoubleSummaryStatistics();
@@ -31,6 +31,10 @@ public class Main {
         Optional<DoubleSummaryStatistics> tendermintStats =
             runTendermint(initalTimeout, 90, 10); // 100
       System.out.println("End run initalTimeout="+initalTimeout);
+      System.out.println("Total Proposals: "+ Simulation.countProposals);
+      System.out.println("Total countBeginProposal: "+ CorrectTendermintNode.countBeginProposal);
+      System.out.println("Total countFailedNode: "+ FailedNode.countFailedNode);
+      System.out.println("maxCycle "+ CorrectTendermintNode.maxCycle);
 
 
 
@@ -108,6 +112,21 @@ public class Main {
     if (!simulation.run(TIME_LIMIT)) { // nguong tren
       return Optional.empty();
     }
+    List<String> proposedNodeIndices = new ArrayList<>();
+    for(Node node: CorrectTendermintNode.listProposedNode){
+      proposedNodeIndices.add(Integer.toString(nodes.indexOf(node)));
+
+    }
+
+    System.out.print("Proposed Nodes: ");
+    for (Node node : CorrectTendermintNode.listProposedNode) {
+      System.out.print(node.getNodeIndex() + ", ");
+
+    }
+    System.out.println("");
+    System.out.println("Index in node array: " + String.join(", ", proposedNodeIndices));
+
+//    System.out.println(",".joi);
 
     List<Node> correctNodes = nodes.stream()
         .filter(n -> n instanceof CorrectTendermintNode)
