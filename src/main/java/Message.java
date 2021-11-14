@@ -48,6 +48,19 @@ class PreCommitMessage extends Message {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** An Algorand soft-vote message */
 class SoftVoteMessage extends Message {
   SoftVoteMessage(int cycle, Proposal proposal) {

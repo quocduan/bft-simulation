@@ -3,8 +3,20 @@ abstract class Node {
   private Proposal output;
   private double terminationTime;
 
+  private int nodeIndex=-1;
+
   Node(EarthPosition position) {
     this.position = position;
+  }
+
+  Node(EarthPosition position, int nodeIndex) {
+    this.position = position;
+    this.nodeIndex = nodeIndex;
+  }
+
+
+  public int getNodeIndex(){
+    return this.nodeIndex;
   }
 
   abstract void onStart(Simulation simulation);
@@ -34,9 +46,13 @@ abstract class Node {
 
 /** A node which has simply failed, and thus ignores all events. */
 class FailedNode extends Node {
-  FailedNode(EarthPosition position) {
+  public FailedNode(EarthPosition position) {
     super(position);
   }
+  public FailedNode(EarthPosition position, int nodeIndex) {
+    super(position, nodeIndex);
+  }
+
 
   @Override public void onStart(Simulation simulation) {
     // No-op.

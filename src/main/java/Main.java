@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Main {
   private static final int RANDOM_SEED = 12345;
-  private static final double TIME_LIMIT = 4;
+  private static final double TIME_LIMIT = 3; //4s
   private static final int SAMPLES = 1000;
 
   public static void main(String[] args) {
@@ -19,22 +19,34 @@ public class Main {
     double algorandBestLatency = Double.MAX_VALUE, algorandBestTimeout = 0;
     double mirBestLatency = Double.MAX_VALUE, mirBestTimeout = 0;
 
-    for (double initalTimeout = 0.01; initalTimeout <= 0.4; initalTimeout += 0.01) {
+    for (double initalTimeout = 0.01; initalTimeout <= 0.04; initalTimeout += 0.01) { // 40 lan
       DoubleSummaryStatistics tendermintOverallStats = new DoubleSummaryStatistics(),
           algorandOverallStats = new DoubleSummaryStatistics(),
           mirOverallStats = new DoubleSummaryStatistics();
-      for (int i = 0; i < SAMPLES; ++i) {
+
+
+
+      System.out.println("Start run initalTimeout="+initalTimeout);
+//      for (int i = 0; i < SAMPLES; ++i) { // 1000
         Optional<DoubleSummaryStatistics> tendermintStats =
-            runTendermint(initalTimeout, 90, 10);
-        Optional<DoubleSummaryStatistics> algorandStats =
-            runAlgorand(initalTimeout, 90, 10);
-        Optional<DoubleSummaryStatistics> mirStats =
-            runMir(initalTimeout, 90, 10);
+            runTendermint(initalTimeout, 90, 10); // 100
+      System.out.println("End run initalTimeout="+initalTimeout);
+
+
+
+
+
+//        Optional<DoubleSummaryStatistics> algorandStats =
+//            runAlgorand(initalTimeout, 90, 10);
+//
+//
+//        Optional<DoubleSummaryStatistics> mirStats =
+//            runMir(initalTimeout, 90, 10);
 
         tendermintStats.ifPresent(tendermintOverallStats::combine);
-        algorandStats.ifPresent(algorandOverallStats::combine);
-        mirStats.ifPresent(mirOverallStats::combine);
-      }
+//        algorandStats.ifPresent(algorandOverallStats::combine);
+//        mirStats.ifPresent(mirOverallStats::combine);
+//      }
 
       if (tendermintOverallStats.getCount() > 0 &&
           tendermintOverallStats.getAverage() < tendermintBestLatency) {
@@ -62,32 +74,38 @@ public class Main {
     System.out.println();
     System.out.printf("Tendermint best with timeout %.2f: %.4f\n",
         tendermintBestTimeout, tendermintBestLatency);
-    System.out.printf("Algorand best with timeout %.2f: %.4f\n",
-        algorandBestTimeout, algorandBestLatency);
-    System.out.printf("Mir best with timeout %.2f: %.4f\n",
-        mirBestTimeout, mirBestLatency);
-    double secondBestLatency = Math.min(tendermintBestLatency, algorandBestLatency);
-    System.out.printf("Mir speedup: %.4f\n",
-        (secondBestLatency - mirBestLatency) / secondBestLatency);
+//    System.out.printf("Algorand best with timeout %.2f: %.4f\n",
+//        algorandBestTimeout, algorandBestLatency);
+//    System.out.printf("Mir best with timeout %.2f: %.4f\n",
+//        mirBestTimeout, mirBestLatency);
+//    double secondBestLatency = Math.min(tendermintBestLatency, algorandBestLatency);
+//    System.out.printf("Mir speedup: %.4f\n",
+//        (secondBestLatency - mirBestLatency) / secondBestLatency);
   }
 
   private static Optional<DoubleSummaryStatistics> runTendermint(
       double initialTimeout, int correctNodeCount, int failedNodeCount) {
     Random random = new Random();
     List<Node> nodes = new ArrayList<>();
+    // tạo correct nodes
     for (int i = 0; i < correctNodeCount; ++i) {
       EarthPosition position = EarthPosition.randomPosition(random);
-      nodes.add(new CorrectTendermintNode(position, initialTimeout));
+      nodes.add(new CorrectTendermintNode(position, initialTimeout, i));
     }
+
+    // tạo failed nodes
     for (int i = 0; i < failedNodeCount; ++i) {
       EarthPosition position = EarthPosition.randomPosition(random);
-      nodes.add(new FailedNode(position));
+      nodes.add(new FailedNode(position, correctNodeCount+i));
     }
-    Collections.shuffle(nodes, random);
+    // trộn lại với nhau thành tập nodes ngẫu nhiên
+     Collections.shuffle(nodes, random);
 
+    // gia lap network, cac nodes connect voi nhau
     Network network = new FullyConnectedNetwork(nodes, random);
-    Simulation simulation = new Simulation(network);
-    if (!simulation.run(TIME_LIMIT)) {
+
+    Simulation simulation = new Simulation(network, initialTimeout);
+    if (!simulation.run(TIME_LIMIT)) { // nguong tren
       return Optional.empty();
     }
 
