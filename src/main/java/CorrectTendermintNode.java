@@ -86,26 +86,45 @@ class CorrectTendermintNode extends Node {
 
     private void beginProposal(Simulation simulation, double time) { // time lien quan den so 4 // thang hien tai la thang nao?
     countBeginProposal++;
-
+      System.out.println("----------------------------- " );
+    System.out.println("beginProposal: " + this.getNodeIndex());
     protocolState = ProtocolState.PROPOSAL;
     if(cycle>maxCycle){
       maxCycle=cycle;
     }
     if (equals(simulation.getLeader(cycle))) {
+      System.out.println("is leader & broadcast: " + this.getNodeIndex());
+
+      if(listProposedNode.size()>=4){
+        System.out.println("listProposedNode.size()>=4");
+      }
       listProposedNode.add(this);
       Proposal proposal = new Proposal();
       Message message = new ProposalMessage(cycle, proposal); // pre-prepare message + block
       Simulation.countProposals++;
       simulation.broadcast(this, message, time); //--> add message event
     }
-    resetTimeout(simulation, time); // --> TimerEvent
-  }
+      System.out.println("resetTimeout " + this.getNodeIndex());
+
+      resetTimeout(simulation, time); // --> TimerEvent
+      System.out.println("----------------------------- " );
+
+    }
 
   private void beginPreVote(Simulation simulation, double time) {
+    System.out.println("----------------------------- " );
+    System.out.println("beginPreVote: " + this.getNodeIndex());
+
     protocolState = ProtocolState.PRE_VOTE;
-    Message message = new PreVoteMessage(cycle, getProposalToPreVote(simulation));
+    Proposal p = getProposalToPreVote(simulation);
+    System.out.println("getProposalToPreVote: "+ p);
+    Message message = new PreVoteMessage(cycle, p);
     simulation.broadcast(this, message, time);
     resetTimeout(simulation, time);
+    System.out.println("broadcast & setTimeout" );
+
+    System.out.println("----------------------------- " );
+
   }
 
   private Proposal getProposalToPreVote(Simulation simulation) {
@@ -118,7 +137,7 @@ class CorrectTendermintNode extends Node {
     for (int prevCycle = cycle - 1; prevCycle >= 0; --prevCycle) {
       Set<Proposal> preVotedProposals = getCycleState(prevCycle).getPreVotedProposals(simulation);// >=2
       if(preVotedProposals.size()>=1){
-        System.out.println("more than one proposal"); // test thì không xảy ra trường hợp này (>=2 proposals) !!!
+        System.out.println("has proposal for pre-voting from previous cycle"); // test thì không xảy ra trường hợp này (>=2 proposals) !!!
       }
       for (Proposal preVotedProposal : preVotedProposals) {
         if (preVotedProposal != null) {
@@ -133,6 +152,7 @@ class CorrectTendermintNode extends Node {
     // lấy proposal thuộc cycle này.
     Set<Proposal> currentProposals = getCurrentCycleState().proposals;
     if (!currentProposals.isEmpty()) {
+      System.out.println("currentProposals is not empty");
       return currentProposals.iterator().next();
     } else {
       return null;
@@ -140,20 +160,36 @@ class CorrectTendermintNode extends Node {
   }
 
   private void beginPreCommit(Simulation simulation, double time) {
+    System.out.println("----------------------------- " );
+    System.out.println("beginPreCommit: " + this.getNodeIndex());
+
     protocolState = ProtocolState.PRE_COMMIT;
     Set<Proposal> preVotedProposals = getCurrentCycleState().getPreVotedProposals(simulation);
     Message message;
     if (preVotedProposals.isEmpty()) {
       message = new PreCommitMessage(cycle, null);
+      System.out.println("beginPreCommit: no proposal" );
+
     } else {
       Proposal proposal = preVotedProposals.iterator().next();
       if(proposal!=null){
-        System.out.println("Non-Null proposal");
+//        System.out.println("Non-Null proposal");
+
+      }else{
+//        System.out.println("beginPreCommit: null proposal" );
+
       }
+      System.out.println("beginPreCommit proposal: " + proposal);
+
+
       message = new PreCommitMessage(cycle, proposal);
     }
+    System.out.println("broadcast & resetTimeout" );
+
     simulation.broadcast(this, message, time);
     resetTimeout(simulation, time);
+    System.out.println("----------------------------- " );
+
   }
 
   private void resetTimeout(Simulation simulation, double time) {

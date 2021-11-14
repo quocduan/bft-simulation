@@ -29,12 +29,12 @@ public class Main {
       System.out.println("Start run initalTimeout="+initalTimeout);
 //      for (int i = 0; i < SAMPLES; ++i) { // 1000
         Optional<DoubleSummaryStatistics> tendermintStats =
-            runTendermint(initalTimeout, 90, 10); // 100
+            runTendermint(initalTimeout, 3, 1); // 100
       System.out.println("End run initalTimeout="+initalTimeout);
       System.out.println("Total Proposals: "+ Simulation.countProposals);
       System.out.println("Total countBeginProposal: "+ CorrectTendermintNode.countBeginProposal);
       System.out.println("Total countFailedNode: "+ FailedNode.countFailedNode);
-      System.out.println("maxCycle "+ CorrectTendermintNode.maxCycle);
+      System.out.println("max Cycle "+ (CorrectTendermintNode.maxCycle+1));
 
 
 
@@ -117,6 +117,15 @@ public class Main {
       proposedNodeIndices.add(Integer.toString(nodes.indexOf(node)));
 
     }
+
+
+    System.out.println("First 10 nodes in list");
+
+//    for(int i=0;i<=10;i++){
+    for(int i=0;i<=3;i++){
+      System.out.print(nodes.get(i).getClass().getSimpleName()+ ",");
+    }
+    System.out.println("");
 
     System.out.print("Proposed Nodes: ");
     for (Node node : CorrectTendermintNode.listProposedNode) {
