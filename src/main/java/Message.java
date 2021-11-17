@@ -1,8 +1,8 @@
 abstract class Message {
   private final int cycle;
-  private final Proposal proposal;
+  private final Proposal proposal; // block
 
-  private  int nodeIndex=-1;
+  private  int nodeIndex=-1;// customized
 
   Message(int cycle, Proposal proposal) {
     this.cycle = cycle;

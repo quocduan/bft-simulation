@@ -54,7 +54,12 @@ class Simulation {
     System.out.println("Start Simulation: "+ this.getId());
     int i = 0;
     for (Node node : network.getNodes()) {
-      i++;
+      i++; // 1
+
+      // node 0 (2), cycle 0
+      // node 1 (3), cycle 0 --> failed node
+      // node 2 (1), cycle 0  ---> khong phai leader --> vao message queue cho vote
+      // node 3 (0), cycle 0  ---> khong phai leader --> vao message queue cho vote
 //      if (i>3) {
 //        break;
 //      }
@@ -64,14 +69,20 @@ class Simulation {
       node.onStart(this);
     }
 
+    // 1 broadcast msg add vao pool == dang lan truyen tren mang // proposal message --> luu trữ, prevotemessage --> prevote
+    // 1 broadcast msg lay ra khoi pool == message do da den noi ( node đích lưu lại block đó vào bộ nhớ của nó)
+    // event msg: khi duoc add vao pool == queue
 
+    // proposal ? cycle?
+//----------------------------------------------------------
     // mỗi loại có một simulator riêng --> quản lý events riêng
-    while (!eventsByTime.isEmpty()) {
+    while (!eventsByTime.isEmpty()) { // 65.000 --> 1 message
       System.out.println("*** eventsByTime size: "+ eventsByTime.size());
       if(maxEventsSize<eventsByTime.size()){
         maxEventsSize=eventsByTime.size();
       }
-      Event event = eventsByTime.pollFirst();
+      // message có time nhỏ nhất
+       Event event = eventsByTime.pollFirst();// time --> event.getTime()
 
       if (event.getTime() > timeLimit) {
         System.out.println("WARNING: Simulation timed out");

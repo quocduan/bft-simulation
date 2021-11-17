@@ -45,7 +45,7 @@ class CorrectTendermintNode extends Node {
       case PRE_COMMIT:
         ++cycle;
         // Exponential backoff.
-        timeout *= 1;// 2,5,10
+        timeout *= 2;// 2,5,10
         beginProposal(simulation, time);
         break;
       default:
@@ -103,7 +103,8 @@ class CorrectTendermintNode extends Node {
     if(cycle>maxCycle){
       maxCycle=cycle;
     }
-    if (equals(simulation.getLeader(cycle))) {
+    // 60, 3
+    if (equals(simulation.getLeader(cycle))) { // 0 // Ordering --> quan trong trong consenus
       System.out.println("is leader & broadcast: " + this.getNodeIndex());
 
       if(listProposedNode.size()>=4){
@@ -117,7 +118,7 @@ class CorrectTendermintNode extends Node {
     }
     System.out.println("resetTimeout " + this.getNodeIndex());
 
-    resetTimeout(simulation, time); // --> TimerEvent
+    resetTimeout(simulation, time); // --> add vào message pool
     System.out.println("----------------------------- " );
 
   }

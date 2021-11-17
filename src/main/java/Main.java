@@ -22,8 +22,8 @@ public class Main {
     for (double initialTimeout = 0.01; initialTimeout <= 0.01; initialTimeout += 0.01) { // 40 lan
 //    for (double initialTimeout = 3; initialTimeout <= 3; initialTimeout += 0.01) { // 40 lan
 //    for (double initialTimeout = 1; initialTimeout <= 1; initialTimeout += 0.01) { // 40 lan
-//    for (double initialTimeout = 0.001; initialTimeout <= 0.001; initialTimeout += 0.01) { // 40 lan
-//    for (double initialTimeout = 0.01; initialTimeout <= 0.01; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 0.00001; initialTimeout <= 0.00001; initialTimeout += 0.01) { // 40 lan
+//    for (double initialTimeout = 0.1; initialTimeout <= 0.1; initialTimeout += 0.01) { // 40 lan
       DoubleSummaryStatistics tendermintOverallStats = new DoubleSummaryStatistics(),
           algorandOverallStats = new DoubleSummaryStatistics(),
           mirOverallStats = new DoubleSummaryStatistics();
@@ -34,7 +34,7 @@ public class Main {
 //      for (int i = 0; i < SAMPLES; ++i) { // 1000 --> chạy 1000 lần cho một initialTimout để lấy số liệu thống kê trung bình chính xác nhất.
         Optional<DoubleSummaryStatistics> tendermintStats =
 //            runTendermint(initialTimeout, 3, 1); // 100
-            runTendermint(initialTimeout, 200, 20); // 100
+            runTendermint(initialTimeout, 3, 1); // 100
       System.out.println("End run initialTimeout="+initialTimeout);
       System.out.println("Total Proposals: "+ Simulation.countProposals);
       System.out.println("Total countBeginProposal: "+ CorrectTendermintNode.countBeginProposal);
@@ -99,17 +99,17 @@ public class Main {
     List<Node> nodes = new ArrayList<>();
     // tạo correct nodes
     for (int i = 0; i < correctNodeCount; ++i) {
-      EarthPosition position = EarthPosition.randomPosition(random);
+      EarthPosition position = EarthPosition.randomPosition(random); // 0 --> 89
       nodes.add(new CorrectTendermintNode(position, initialTimeout, i));
     }
 
     // tạo failed nodes
-    for (int i = 0; i < failedNodeCount; ++i) {
+    for (int i = 0; i < failedNodeCount; ++i) { // 90 --> 99
       EarthPosition position = EarthPosition.randomPosition(random);
       nodes.add(new FailedNode(position, correctNodeCount+i));
     }
     // trộn lại với nhau thành tập nodes ngẫu nhiên
-     Collections.shuffle(nodes, random);
+     Collections.shuffle(nodes, random); // LIST <-- 0,1,2,4 (42, 81, 29, 13)
 
     // gia lap network, cac nodes connect voi nhau
     Network network = new FullyConnectedNetwork(nodes, random);

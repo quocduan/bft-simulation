@@ -22,6 +22,8 @@ abstract class Network {
 
   Node getLeader(int index) {
     // Round robin.
+    // 0,FAILED,2,3
+    // 0 %100 = 0  ==> NODE 0
     return nodes.get(index % nodes.size());
   }
 
